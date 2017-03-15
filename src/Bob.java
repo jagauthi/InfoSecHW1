@@ -32,6 +32,7 @@ public class Bob {
 	public void decryptRandomKey(String filePath) {
 		Cipher decrypter;
 		try {
+			//Decpryts the message using Bob's private key
 			decrypter = Cipher.getInstance("RSA");
 			decrypter.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
 			byte[] encryptedK = readBytesFromFile("randomKey.txt");

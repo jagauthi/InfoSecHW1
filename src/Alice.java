@@ -32,11 +32,13 @@ public class Alice {
 	}
 
 	public void generateRandomKey(String filePath) {
+		//Generates a random int and saves it as the key
 		SecureRandom r = new SecureRandom();
 		k = r.nextInt();
 		System.out.println("Alice's unencrypted key: " + k);
 		Cipher encrypter;
 		try {
+			//Encrypts the message using Bob's public key
 			encrypter = Cipher.getInstance("RSA");
 			encrypter.init(Cipher.ENCRYPT_MODE, Main.bobPublicKey);
 			byte[] kToBytes = ByteBuffer.allocate(4).putInt(k).array();
