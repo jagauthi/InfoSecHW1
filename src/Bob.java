@@ -1,9 +1,9 @@
 
 public class Bob {
 
-	int privateKey;
+	private int privateD, privateN;
 	
 	public Bob() {
-		
+		privateN = Main.bobPubN;
 	}
 }

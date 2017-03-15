@@ -1,9 +1,9 @@
 
 public class Alice {
-	
-	int privateKey;
+
+	private int privateD, privateN;
 	
 	public Alice() {
-		
+		privateN = Main.alicePubN;
 	}
 }
