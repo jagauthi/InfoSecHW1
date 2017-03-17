@@ -7,6 +7,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.Signature;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
@@ -73,7 +74,7 @@ public class Bob {
 			//Reads Alice's message and hash			
 			byte[] message = readBytesFromFile(messagePath);
 			byte[] hash = readBytesFromFile(hashPath);
-
+			
 			//Creates the message authenticator that will encrypt the message using previous k as the key
 			Mac hMac = Mac.getInstance("HmacSHA256");
 			SecretKeySpec secret_key = new SecretKeySpec(ByteBuffer.allocate(16).putInt(k).array(), "HmacSHA256");
@@ -81,7 +82,7 @@ public class Bob {
 
 			//Hashes Alice's message and compares it with her hash to authenticate
 			byte[] newHash = hMac.doFinal(message);
-			System.out.print("Bob's hash (in bytes): \n\t");
+			System.out.print("Bob's computed hash (in bytes): \n\t");
 			for(int i = 0; i < newHash.length; i++) {
 				System.out.print(newHash[i]);
 				if(i != newHash.length-1)
@@ -89,6 +90,7 @@ public class Bob {
 			}
 			System.out.println();
 			
+			//Checks that the hashes are equal
 			if(Arrays.equals(newHash, hash)) {
 				System.out.println("Alice's message has not been modified!");
 			}
@@ -97,6 +99,30 @@ public class Bob {
 			}
 		} 
 		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void receiveSignedMessage(String messagePath, String sigPath) {
+		try {
+			//Reads Alice's message and signature
+			byte[] message = readBytesFromFile(messagePath);
+			byte[] signature = readBytesFromFile(sigPath);
+						
+			//Creates the object that will verify alice's message using her public key
+			final Signature getSignature = Signature.getInstance("SHA256withRSA");
+			getSignature.initVerify(Main.alicePublicKey);
+			getSignature.update(message);
+
+			//Verifies the message
+		    if(getSignature.verify(signature)) {
+		    	System.out.println("This signature is verified for the message received!");
+		    }
+		    else {
+		    	System.out.println("The signature is not verified, it may not be from Alice.");
+		    }
+		}
+		catch(Exception e) {
 			e.printStackTrace();
 		}
 	}

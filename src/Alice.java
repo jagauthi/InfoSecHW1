@@ -9,6 +9,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Signature;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -100,10 +101,11 @@ public class Alice {
 
 			//Hashes the message and writes both the message and the hash to their files
 			byte[] hash = hMac.doFinal(message);
-			System.out.print("Alice's hash (in bytes): \n\t");
+			
+			System.out.print("Alice's hash of the message (in bytes): \n\t");
 			for(int i = 0; i < hash.length; i++) {
 				System.out.print(hash[i]);
-				if(i != hash.length - 1)
+				if(i != hash.length-1)
 					System.out.print(", ");
 			}
 			System.out.println();
@@ -113,6 +115,35 @@ public class Alice {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void sendSignedMessage(String messagePath, String sigPath) {
+		byte[] message = new byte[] {
+				'a', 'b', 'c', 'd', 'e',
+				'f', 'g', 'h', 'i', 'j',
+				'k', 'l', 'm', 'n', 'o',
+				'A', 'B', 'C', 'D', 'E', 
+				'F', 'G', 'H', 'I', 'J',
+				'K', 'L', 'M', 'N', 'O',
+				'P', 'Q', 'R', 'S', 'T',
+				'U', 'V', 'W', 'X', 'Y'
+				};
+		
+		try{
+			//Creates the object that will sign the message using Alice's private key
+			Signature signing = Signature.getInstance("SHA256withRSA");
+			signing.initSign(keyPair.getPrivate());
+			signing.update(message);
+			
+			//Gets the signature of the message and both the message and the signature to their files
+		    byte[] signature = signing.sign();
+		    writeBytesToFile(messagePath, message);
+		    writeBytesToFile(sigPath, signature);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	    
 	}
 	
 	public PublicKey getPublicKey() {
