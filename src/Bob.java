@@ -75,7 +75,7 @@ public class Bob {
 			byte[] message = readBytesFromFile(messagePath);
 			byte[] hash = readBytesFromFile(hashPath);
 			
-			//Creates the message authenticator that will encrypt the message using previous k as the key
+			//Creates the message authenticator that will decrypt the message using previous k as the key
 			Mac hMac = Mac.getInstance("HmacSHA256");
 			SecretKeySpec secret_key = new SecretKeySpec(ByteBuffer.allocate(16).putInt(k).array(), "HmacSHA256");
 			hMac.init(secret_key);
